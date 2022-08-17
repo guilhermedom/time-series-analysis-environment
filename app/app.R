@@ -8,19 +8,29 @@ ui = fluidPage(
     theme = shinytheme("sandstone"),
 
     # Application title
-    titlePanel(h1(align = "center", "Time Series Analysis and Prediction Environment")),
+    titlePanel(h1(align = "center", "Time Series Analysis Environment")),
     
     br(),
     br(),
     
     fluidRow(
-        column(4, align = "center", fileInput("inputFileID", "Choose file to load time series:", multiple = F, accept = c(".csv")),
-               helpText("Note: file must contain only one column, without header. Time series frequency must be in months.")),
-        column(4, align = "center", dateRangeInput("dateRangeInputID", label = "Time series date range",
-                                 format = "mm/yyyy", start = "2000/01/01", end = "2013/12/31", startview = "year", separator = " to "),
-               helpText("Note: you may select any day when defining month and year.")),
-        column(4, align = "center", numericInput("forecastPeriodID", "How many months do you want to forecast?", 12, min = 1, max = 48),
-               actionButton("forecastButtonID", "Forecast!"))
+        column(4, align = "center",
+               fileInput("inputFileID", "Choose file to load time series:",
+                         multiple = F, accept = c(".csv")),
+               helpText("Note: file must contain only one column, without header.
+                        Time series frequency must be in months.")
+        ),
+        column(4, align = "center",
+               dateRangeInput("dateRangeInputID", label = "Time series date range",
+                              format = "mm/yyyy", start = "2000/01/01", end = "2013/12/31",
+                              startview = "year", separator = " to "),
+               helpText("Note: you may select any day when defining month and year.")
+        ),
+        column(4, align = "center",
+               numericInput("forecastPeriodID", "How many months do you want to forecast?",
+                            value = 12, min = 1, max = 48),
+               actionButton("forecastButtonID", "Forecast!")
+        )
     ),
     fluidRow(
         column(6, plotOutput("histogramPlotID")),
@@ -42,7 +52,10 @@ ui = fluidPage(
 # Define server logic
 server = function(input, output) {
     observeEvent(input$forecastButtonID, {
-        validate(need(input$inputFileID, "Please provide a file having a time series to analyze."))
+        validate(
+            need(input$inputFileID, "Please provide a file having a time series to analyze.")
+        )
+        
         inputFile = input$inputFileID
         data = read.csv(inputFile$datapath, header = F)
         
@@ -51,14 +64,23 @@ server = function(input, output) {
         endYear = as.integer(substr(input$dateRangeInputID[2], 1, 4))
         endMonth = as.integer(substr(input$dateRangeInputID[2], 6, 7))
         
-        data = ts(data, start = c(startYear, startMonth), end = c(endYear, endMonth), frequency = 12)
+        data = ts(data, start = c(startYear, startMonth), end = c(endYear, endMonth),
+                  frequency = 12)
         
-        output$timeseriesPlotID = renderPlot({autoplot(data, main="Original Time Series")})
-        output$histogramPlotID = renderPlot({hist(data, main = "Data Histogram")})
-        output$boxplotPlotID = renderPlot({boxplot(data, main = "Data Boxplot")})
+        output$timeseriesPlotID = renderPlot({
+            autoplot(data, main = "Original Time Series")
+        })
+        output$histogramPlotID = renderPlot({
+            hist(data, main = "Data Histogram")
+        })
+        output$boxplotPlotID = renderPlot({
+            boxplot(data, main = "Data Boxplot")
+        })
         
         decomposedSeries = decompose(data)
-        output$decompositionPlotID = renderPlot({autoplot(decomposedSeries, main = "Decomposed Time Series")})
+        output$decompositionPlotID = renderPlot({
+            autoplot(decomposedSeries, main = "Decomposed Time Series")
+        })
         
         arimaModel = auto.arima(data)
         forecastPeriod = input$forecastPeriodID
@@ -71,7 +93,10 @@ server = function(input, output) {
         output$lowerBoundTitleID = renderText({"Lower Bound"})
         output$meanTitleID = renderText({"Mean"})
         output$upperBoundTitleID = renderText({"Upper Bound"})
-        output$forecastPlotID = renderPlot({autoplot(prediction, main = "Forecasted Time Series")})
+        
+        output$forecastPlotID = renderPlot({
+            autoplot(prediction, main = "Forecasted Time Series")
+        })
     })
 }
 

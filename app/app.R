@@ -32,6 +32,7 @@ ui = fluidPage(
                actionButton("forecastButtonID", "Forecast!")
         )
     ),
+    hr(),
     fluidRow(
         column(6, plotOutput("histogramPlotID")),
         column(6, plotOutput("boxplotPlotID"))
@@ -43,9 +44,15 @@ ui = fluidPage(
     hr(),
     fluidRow(
         column(6, plotOutput("forecastPlotID")),
-        column(2, h2(textOutput("lowerBoundTitleID")), tableOutput("lowerBoundTableID")),
-        column(2, h2(textOutput("meanTitleID")), tableOutput("meanTableID")),
-        column(2, h2(textOutput("upperBoundTitleID")), tableOutput("upperBoundTableID"))
+        column(2, align = "center",
+               h4(textOutput("lowerBoundTitleID")), tableOutput("lowerBoundTableID")
+        ),
+        column(2, align = "center",
+               h4(textOutput("meanTitleID")), tableOutput("meanTableID")
+        ),
+        column(2, align = "center",
+               h4(textOutput("upperBoundTitleID")), tableOutput("upperBoundTableID")
+        )
     )
 )
 
@@ -67,14 +74,14 @@ server = function(input, output) {
         data = ts(data, start = c(startYear, startMonth), end = c(endYear, endMonth),
                   frequency = 12)
         
-        output$timeseriesPlotID = renderPlot({
-            autoplot(data, main = "Original Time Series")
-        })
         output$histogramPlotID = renderPlot({
-            hist(data, main = "Data Histogram")
+            hist(data, xlab = "Data", main = "Data Histogram")
         })
         output$boxplotPlotID = renderPlot({
             boxplot(data, main = "Data Boxplot")
+        })
+        output$timeseriesPlotID = renderPlot({
+            autoplot(data, ylab = "Data", main = "Original Time Series")
         })
         
         decomposedSeries = decompose(data)
@@ -95,7 +102,7 @@ server = function(input, output) {
         output$upperBoundTitleID = renderText({"Upper Bound"})
         
         output$forecastPlotID = renderPlot({
-            autoplot(prediction, main = "Forecasted Time Series")
+            autoplot(prediction, ylab = "Data", main = "Forecasted Time Series")
         })
     })
 }

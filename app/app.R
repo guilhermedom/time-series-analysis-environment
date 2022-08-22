@@ -8,7 +8,8 @@ ui = fluidPage(
     theme = shinytheme("sandstone"),
 
     # Application title
-    titlePanel(h1(align = "center", "Time Series Analysis Environment")),
+    titlePanel(h1(align = "center", "Time Series Analysis Environment"),
+               windowTitle = "Time Series Analysis Environment"),
     
     br(),
     br(),

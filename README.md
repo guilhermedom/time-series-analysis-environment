@@ -2,7 +2,13 @@
 
 A web-based environment for analyzing time series and forecasting with them.
 
-### Features in This App
+---
+
+### Usage
+
+App currently deployed and runnable at: https://domdatascience.shinyapps.io/time-series-analysis-environment/
+
+### App Features
 
 A series of plots present the time series provided by the user and its forecasting. Many interactions can be performed with the app:
 
